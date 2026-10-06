@@ -289,7 +289,9 @@ $('go').onclick=async()=>{
     for(let i=0;i<total;i++){
       if(stopped)break;
       const f=files[i];
-      let base=f.name.replace(/\.[^.]+$/,''),k=1,b0=base;
+      let base=f.name.replace(/\.[^.]+$/,''),k=1;
+      base=base.replace(/[\s_\-.]*(?<!\d)9\s*[x×X:]\s*16$/i,'')||base; // bỏ đuôi 9x16 của input
+      const b0=base;
       while(used.has(base))base=b0+'_'+(++k);used.add(base);
       try{
         const outs=await processVideo(f,p=>{
