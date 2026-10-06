@@ -1,13 +1,15 @@
 <!doctype html>
-<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Video Resizer</title>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Video Resizer - Matech Mobile</title>
 <style>
-:root{font-family:Inter,system-ui,sans-serif;color-scheme:light dark;--bg:light-dark(#f5f7fb,#10131a);--card:light-dark(#fff,#181c25);--text:light-dark(#151923,#f4f6fa);--muted:light-dark(#697386,#a9b1c2);--line:light-dark(#e4e8ef,#303746);--accent:#5b5cf0}
+:root{font-family:Inter,system-ui,sans-serif;color-scheme:light dark;--bg:light-dark(#f3f5f4,#161616);--card:light-dark(#fff,#222);--text:light-dark(#262626,#f5f5f5);--muted:light-dark(#6b726f,#a8aeab);--line:light-dark(#e2e6e4,#383b3a);--accent:#27ae60}
 *{box-sizing:border-box}body{margin:0}.app{min-height:100vh;background:var(--bg);color:var(--text);padding:32px}.wrap{max-width:1340px;margin:auto}
 h1{margin:0 0 6px;font-size:30px}.sub{margin:0 0 24px;color:var(--muted)}
 .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin-bottom:16px}
 .label{font-size:13px;font-weight:700;margin-bottom:10px}
 .drop{border:2px dashed var(--line);border-radius:14px;padding:38px;text-align:center;cursor:pointer}.drop.drag{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,transparent)}
-.fname{margin-top:12px;font-size:14px;color:var(--muted)}input[type=file]{display:none}
+input[type=file]{display:none}
+.flist{margin-top:14px;display:flex;flex-direction:column;gap:8px}.fi{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:14px}
+.fi span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.fi small{color:var(--muted);margin-left:8px}.fi button{border:0;background:transparent;color:var(--muted);font-size:16px;cursor:pointer}
 .formats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .format{border:1px solid var(--line);background:transparent;color:var(--text);padding:14px;border-radius:12px;cursor:pointer;font-size:18px;font-weight:800}.format.active{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent)}
 .row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
@@ -17,14 +19,17 @@ h1{margin:0 0 6px;font-size:30px}.sub{margin:0 0 24px;color:var(--muted)}
 .logo-btn img{width:30px;height:30px;border-radius:7px;object-fit:cover;display:none}
 .hint{font-size:12px;color:var(--muted);margin-top:10px}
 .actions{display:flex;gap:10px}.btn{border:0;border-radius:12px;padding:13px 18px;font-weight:800;cursor:pointer;font-size:14px}
-.primary{background:var(--accent);color:#fff}.secondary{background:transparent;color:var(--text);border:1px solid var(--line)}.btn:disabled{opacity:.45;cursor:not-allowed}
+.primary{background:var(--accent);color:#fff}.secondary{background:transparent;color:var(--text);border:1px solid var(--line)}.stop{background:#dc2626;color:#fff}.btn:disabled{opacity:.45;cursor:not-allowed}
 .status{color:var(--muted);font-size:13px;margin-top:12px}
 .bar{height:6px;border-radius:6px;background:var(--line);margin-top:10px;overflow:hidden;display:none}.bar i{display:block;height:100%;width:0;background:var(--accent)}
-#preview{display:none}#result{width:100%;max-height:520px;background:#000;border-radius:12px}
+#preview{display:none}
 .res{margin-bottom:20px}.res .t{font-weight:700;font-size:13px;margin-bottom:8px}.res video{width:100%;max-height:420px;background:#000;border-radius:12px}
+.strip{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x proximity;padding:2px 2px 10px}
+.vc{flex:0 0 auto;scroll-snap-align:start;max-width:min(100%,520px)}.res .vc video{width:auto;height:280px;max-height:none;max-width:100%;display:block}
+.cap{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.5;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .layout{display:grid;grid-template-columns:minmax(0,1fr) 440px;gap:20px;align-items:start}.side{position:sticky;top:20px}
 #demo{display:flex;flex-wrap:wrap;gap:16px 10px;align-items:flex-end}.dl{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px}
-.frame{position:relative;overflow:hidden;border-radius:10px;container-type:size;background:linear-gradient(135deg,#5b5cf0,#8b5cf6 50%,#ec4899)}
+.frame{position:relative;overflow:hidden;border-radius:10px;container-type:size;background:linear-gradient(135deg,#262626,#1d6b3d 60%,#27ae60)}
 .frame:before{content:"";position:absolute;inset:0;background:rgba(0,0,0,.35)}
 .vid{position:absolute;left:50%;top:0;height:100%;aspect-ratio:9/16;transform:translateX(-50%);background:#0b0d12;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4cqh;color:#cbd2e0;font-size:5.5cqh;font-weight:700}.vid b{font-size:12cqh}
 .zone{position:absolute;top:0;height:100%;width:calc((100cqw - 56.25cqh)/2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3cqh;color:#fff}.zone.l{left:0}.zone.r{right:0}
@@ -38,11 +43,11 @@ a.download{display:inline-block;margin-top:12px;text-decoration:none}
 @media(max-width:650px){.app{padding:18px}.formats{grid-template-columns:repeat(3,1fr)}.row{grid-template-columns:1fr}}
 </style></head>
 <body><main class="app"><div class="wrap">
-<h1>Video Resizer</h1><p class="sub">Từ video 9:16 → 16:9, 1:1, 4:5 cho team UA. Xuất nhanh bằng WebCodecs, giữ nguyên audio gốc.</p>
+<h1>Video Resizer - Matech Mobile</h1><p class="sub">Từ video 9:16 → 16:9, 1:1, 4:5 cho team UA. Upload 1 hoặc nhiều video, xuất nhanh bằng WebCodecs, giữ nguyên audio gốc.</p>
 
 <div class="layout"><div class="main">
-<section class="card"><div class="drop" id="drop"><strong>Kéo thả video vào đây</strong><br><span style="color:var(--muted)">hoặc bấm để chọn video MP4 (9:16)</span>
-<input id="file" type="file" accept="video/mp4,video/quicktime,.mp4,.mov,.m4v"><div class="fname" id="fname"></div></div></section>
+<section class="card"><div class="drop" id="drop"><strong>Kéo thả 1 hoặc nhiều video vào đây</strong><br><span style="color:var(--muted)">hoặc bấm để chọn video MP4 (9:16)</span>
+<input id="file" type="file" multiple accept="video/mp4,video/quicktime,.mp4,.mov,.m4v"></div><div class="flist" id="flist"></div></section>
 
 <section class="card"><div class="label">OUTPUT FORMAT (chọn 1 hoặc nhiều)</div><div class="formats" id="formats"></div></section>
 
@@ -51,23 +56,27 @@ a.download{display:inline-block;margin-top:12px;text-decoration:none}
 <div class="field"><label>Logo app</label><label class="logo-btn"><img id="logoPrev" alt=""><span id="logoTxt">Chọn logo…</span><input id="logo" type="file" accept="image/*"></label></div>
 <div class="field"><label>Tên app</label><input id="appName" type="text" placeholder="Tên app"></div>
 <div class="field"><label>Button CTA</label><select id="cta"><option>Download Now</option><option>Try Now</option><option>Install Now</option><option value="__custom">Tự nhập text…</option></select></div>
-</div><div class="row r2"><div class="field" id="ctaCustomWrap"><label>Text CTA tùy chỉnh</label><input id="ctaCustom" type="text" maxlength="24" placeholder="Nhập text CTA"></div><div class="field"><label>Màu button CTA</label><div class="sw" id="sw"></div></div></div><div class="hint">Logo, tên app và CTA chỉ hiện ở định dạng 16:9 (logo + tên bên trái, CTA bên phải).</div></section>
+</div><div class="row r2"><div class="field" id="ctaCustomWrap"><label>Text CTA tùy chỉnh</label><input id="ctaCustom" type="text" maxlength="24" placeholder="Nhập text CTA"></div><div class="field"><label>Màu button CTA</label><div class="sw" id="sw"></div></div></div><div class="hint">Logo, tên app và CTA chỉ hiện ở định dạng 16:9 (logo + tên bên trái, CTA bên phải). Áp dụng chung cho tất cả video.</div></section>
 
-<section class="card"><div class="actions"><button class="btn primary" id="go" disabled>Resize video</button><button class="btn secondary" id="reset">Reset</button></div>
+<section class="card"><div class="actions"><button class="btn primary" id="go" disabled>Resize video</button><button class="btn stop" id="stop" disabled>STOP</button><button class="btn secondary" id="reset">Reset</button></div>
 <div class="status" id="status">Xử lý hoàn toàn trên trình duyệt (Chrome/Edge bản mới).</div><div class="bar" id="bar"><i id="barI"></i></div></section>
 
 <section class="card" id="preview"><div class="label">RESULT</div><div id="results"></div></section>
-</div><aside class="side"><section class="card"><div class="label">DEMO ĐỊNH DẠNG</div><div id="demo"></div><div class="hint">Minh họa bố cục, không dùng video thật. Các format có cùng chiều cao, đúng tỉ lệ khi xuất.</div></section></aside></div>
+</div><aside class="side"><section class="card"><div class="label">DEMO ĐỊNH DẠNG</div><div id="demo"></div></section></aside></div>
 </div></main>
 <script src="https://cdn.jsdelivr.net/npm/mp4box@0.5.2/dist/mp4box.all.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mp4-muxer@5.1.3/build/mp4-muxer.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <script>
 const RATIOS={"16:9":[16,9],"1:1":[1,1],"4:5":[4,5]};
-const sel=new Set(["16:9"]);let file=null,logoImg=null,urls=[],busy=false;
+const sel=new Set(["16:9"]);let files=[],logoImg=null,urls=[],busy=false,stopped=false,curKill=null;const STOP='__stop__';
 const $=id=>document.getElementById(id);
 const COLORS=['#16a34a','#2563eb','#dc2626','#f97316','#7c3aed','#111827'];let ctaColor=COLORS[0];
 const lighten=(h,p)=>{const n=parseInt(h.slice(1),16),f=v=>Math.round(v+(255-v)*p);return `rgb(${f(n>>16)},${f(n>>8&255)},${f(n&255)})`};
 const getCta=()=>{const v=$('cta').value;return v==='__custom'?($('ctaCustom').value.trim()||'Download Now'):v};
+const esc=t=>t.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const mb=n=>(n/1048576).toFixed(1)+' MB';
+const IDLE='Xử lý hoàn toàn trên trình duyệt (Chrome/Edge bản mới).';
 
 for(const name of Object.keys(RATIOS)){
   const b=document.createElement('button');b.className='format'+(sel.has(name)?' active':'');b.textContent=name;
@@ -78,13 +87,29 @@ for(const name of Object.keys(RATIOS)){
   $('formats').appendChild(b);
 }
 function clearResults(){urls.forEach(u=>URL.revokeObjectURL(u));urls=[];$('results').innerHTML=''}
+
+// ---- File list (multi upload) ----
 const drop=$('drop'),input=$('file');
 drop.onclick=()=>input.click();
 ['dragenter','dragover'].forEach(e=>drop.addEventListener(e,x=>{x.preventDefault();drop.classList.add('drag')}));
 ['dragleave','drop'].forEach(e=>drop.addEventListener(e,x=>{x.preventDefault();drop.classList.remove('drag')}));
-drop.addEventListener('drop',e=>setFile(e.dataTransfer.files[0]));
-input.onchange=e=>setFile(e.target.files[0]);
-function setFile(f){if(!f)return;file=f;$('fname').textContent=f.name;$('go').disabled=false;$('status').textContent='Sẵn sàng resize.'}
+drop.addEventListener('drop',e=>addFiles(e.dataTransfer.files));
+input.onchange=e=>{addFiles(e.target.files);input.value=''};
+function addFiles(list){
+  if(busy)return;
+  for(const f of list){
+    if(!(/^video\//.test(f.type)||/\.(mp4|mov|m4v)$/i.test(f.name)))continue;
+    if(!files.some(x=>x.name===f.name&&x.size===f.size&&x.lastModified===f.lastModified))files.push(f);
+  }
+  renderList();
+}
+function renderList(){
+  $('flist').innerHTML=files.map((f,i)=>`<div class="fi"><span>${esc(f.name)}<small>${mb(f.size)}</small></span><button data-i="${i}" title="Xóa">✕</button></div>`).join('');
+  $('flist').querySelectorAll('button').forEach(b=>b.onclick=()=>{if(busy)return;files.splice(+b.dataset.i,1);renderList()});
+  $('go').disabled=busy||!files.length;
+  if(files.length)$('status').textContent=`Sẵn sàng resize ${files.length} video.`;
+}
+
 $('logo').onchange=e=>{
   const f=e.target.files[0];if(!f)return;
   const img=new Image();img.onload=()=>{logoImg=img;$('logoPrev').src=img.src;$('logoPrev').style.display='block';$('logoTxt').textContent=f.name;renderDemo()};
@@ -92,9 +117,9 @@ $('logo').onchange=e=>{
 };
 $('reset').onclick=()=>{
   if(busy)return;
-  file=null;input.value='';$('fname').textContent='';$('go').disabled=true;$('preview').style.display='none';
+  files=[];input.value='';renderList();$('go').disabled=true;$('preview').style.display='none';
   logoImg=null;$('logo').value='';$('logoPrev').style.display='none';$('logoTxt').textContent='Chọn logo…';$('appName').value='';$('ctaCustom').value='';$('cta').selectedIndex=0;ctaColor=COLORS[0];document.querySelectorAll('.swb').forEach((x,i)=>x.classList.toggle('on',i===0));updCustom();renderDemo();
-  $('bar').style.display='none';$('status').textContent='Xử lý hoàn toàn trên trình duyệt (Chrome/Edge bản mới).';
+  $('bar').style.display='none';$('status').textContent=IDLE;
   clearResults();
 };
 
@@ -132,139 +157,181 @@ function videoDesc(mp4,track){
   }
 }
 
-$('go').onclick=async()=>{
-  if(!file||busy)return;
-  if(!window.VideoDecoder||!window.VideoEncoder){$('status').textContent='Trình duyệt không hỗ trợ WebCodecs. Hãy dùng Chrome/Edge bản mới.';return}
-  busy=true;$('go').disabled=true;$('preview').style.display='none';clearResults();$('bar').style.display='block';$('barI').style.width='0';
-  const t0=performance.now();let err=null;
-  try{
-    // 1. Demux
-    $('status').textContent='Đang đọc video…';
-    const buf=await file.arrayBuffer();
-    const mp4=MP4Box.createFile();
-    const info=await new Promise((res,rej)=>{mp4.onReady=res;mp4.onError=rej;buf.fileStart=0;mp4.appendBuffer(buf);mp4.flush()});
-    const vid=info.videoTracks[0],aud=info.audioTracks[0];
-    if(!vid)throw new Error('Không tìm thấy video track');
-    let audDesc=null;
-    if(aud){
-      if(!aud.codec.startsWith('mp4a'))throw new Error('Audio gốc không phải AAC ('+aud.codec+'), tool chưa hỗ trợ giữ nguyên.');
-      const e=mp4.getTrackById(aud.id).mdia.minf.stbl.stsd.entries[0];
-      audDesc=e.esds&&e.esds.esd.descs[0]&&e.esds.esd.descs[0].descs[0]?new Uint8Array(e.esds.esd.descs[0].descs[0].data):undefined;
-    }
-    const vs=[],as=[];
-    await new Promise(res=>{
-      mp4.onSamples=(id,u,s)=>{(id===vid.id?vs:as).push(...s);if(vs.length>=vid.nb_samples&&(!aud||as.length>=aud.nb_samples))res()};
-      mp4.setExtractionOptions(vid.id,null,{nbSamples:500});
-      if(aud)mp4.setExtractionOptions(aud.id,null,{nbSamples:500});
-      mp4.start();
-    });
+// Process ONE video -> [{fmt,W,H,data}] for every selected format. onProg(0..1)
+async function processVideo(file,onProg){
+  let err=null;
+  const buf=await file.arrayBuffer();
+  const mp4=MP4Box.createFile();
+  const info=await new Promise((res,rej)=>{mp4.onReady=res;mp4.onError=rej;buf.fileStart=0;mp4.appendBuffer(buf);mp4.flush()});
+  const vid=info.videoTracks[0],aud=info.audioTracks[0];
+  if(!vid)throw new Error('Không tìm thấy video track');
+  let audDesc=null;
+  if(aud){
+    if(!aud.codec.startsWith('mp4a'))throw new Error('Audio gốc không phải AAC ('+aud.codec+'), tool chưa hỗ trợ giữ nguyên.');
+    const e=mp4.getTrackById(aud.id).mdia.minf.stbl.stsd.entries[0];
+    audDesc=e.esds&&e.esds.esd.descs[0]&&e.esds.esd.descs[0].descs[0]?new Uint8Array(e.esds.esd.descs[0].descs[0].data):undefined;
+  }
+  const vs=[],as=[];
+  await new Promise(res=>{
+    mp4.onSamples=(id,u,s)=>{(id===vid.id?vs:as).push(...s);if(vs.length>=vid.nb_samples&&(!aud||as.length>=aud.nb_samples))res()};
+    mp4.setExtractionOptions(vid.id,null,{nbSamples:500});
+    if(aud)mp4.setExtractionOptions(aud.id,null,{nbSamples:500});
+    mp4.start();
+  });
 
-    // 2. Per-format setup (decode once, encode every selected format)
-    const vw=vid.video.width,vh=vid.video.height;
-    const fps=Math.round(vid.nb_samples/(vid.duration/vid.timescale))||30;
-    const name=$('appName').value.trim(),cta=getCta();
-    const outs=[];
-    for(const f of Object.keys(RATIOS).filter(k=>sel.has(k))){
-      const [rw,rh]=RATIOS[f];
-      const H=even(vh),W=even(H*rw/rh);
-      const sc=Math.min(W/vw,H/vh),dw=vw*sc,dh=vh*sc,dx=(W-dw)/2,dy=(H-dh)/2;
-      const overlay=f==='16:9'?buildOverlay(W,H,dx,dw,name,cta,ctaColor):null;
-      const canvas=new OffscreenCanvas(W,H),ctx=canvas.getContext('2d',{alpha:false});ctx.imageSmoothingQuality='high';
-      // Smooth gaussian blur: blur at 1/6 scale (fast), with padding so edges don't fade, then upscale
-      const bw=Math.max(16,Math.round(W/6)),bh=Math.max(16,Math.round(H/6));
-      const br=Math.max(4,bh*0.045),pad=Math.ceil(br*3),bwP=bw+2*pad,bhP=bh+2*pad;
-      const bg=new OffscreenCanvas(bwP,bhP),bctx=bg.getContext('2d');bctx.imageSmoothingQuality='high';bctx.filter=`blur(${br}px)`;
-      const needBg=Math.abs(W-dw)>1||Math.abs(H-dh)>1,bs=Math.max(bwP/vw,bhP/vh)*1.15;
-      const draw=fr=>{
-        if(needBg){bctx.drawImage(fr,(bwP-vw*bs)/2,(bhP-vh*bs)/2,vw*bs,vh*bs);ctx.drawImage(bg,pad,pad,bw,bh,0,0,W,H);ctx.fillStyle='rgba(0,0,0,.35)';ctx.fillRect(0,0,W,H)}
-        ctx.drawImage(fr,dx,dy,dw,dh);
-        if(overlay)ctx.drawImage(overlay,0,0);
-      };
-      const muxer=new Mp4Muxer.Muxer({
-        target:new Mp4Muxer.ArrayBufferTarget(),
-        video:{codec:'avc',width:W,height:H},
-        ...(aud?{audio:{codec:'aac',numberOfChannels:aud.audio.channel_count,sampleRate:aud.audio.sample_rate}}:{}),
-        fastStart:'in-memory',firstTimestampBehavior:'offset'
-      });
-      const bitrate=Math.min(50e6,Math.max(8e6,W*H*fps*0.15));
-      let cfg=null;
-      find:for(const hw of ['prefer-hardware','no-preference'])for(const codec of ['avc1.640033','avc1.4d0033','avc1.42003e']){
-        const c={codec,width:W,height:H,bitrate,framerate:fps,hardwareAcceleration:hw};
-        if((await VideoEncoder.isConfigSupported(c)).supported){cfg=c;break find}
-      }
-      if(!cfg)throw new Error('Không encode được H.264 ở '+f+' ('+W+'×'+H+')');
-      const enc=new VideoEncoder({output:(c,m)=>muxer.addVideoChunk(c,m),error:e=>err=e});
-      enc.configure(cfg);
-      // Audio: copy original AAC packets as-is (no re-encode)
-      as.forEach((s,i)=>muxer.addAudioChunkRaw(s.data,s.is_sync?'key':'delta',Math.round(1e6*s.cts/s.timescale),Math.round(1e6*s.duration/s.timescale),
-        i===0?{decoderConfig:{codec:aud.codec,numberOfChannels:aud.audio.channel_count,sampleRate:aud.audio.sample_rate,description:audDesc}}:undefined));
-      outs.push({fmt:f,W,H,canvas,draw,muxer,enc});
-    }
-
-    let n=0;
-    const dec=new VideoDecoder({
-      output:fr=>{
-        for(const o of outs){
-          o.draw(fr);
-          const out=new VideoFrame(o.canvas,{timestamp:fr.timestamp,duration:fr.duration||undefined});
-          o.enc.encode(out,{keyFrame:n%(fps*2)===0});out.close();
-        }
-        fr.close();n++;
-      },
-      error:e=>err=e
-    });
-    let dcfg=null;
-    for(const hw of ['prefer-hardware','no-preference']){
-      const c={codec:vid.codec,codedWidth:vw,codedHeight:vh,description:videoDesc(mp4,vid),hardwareAcceleration:hw,optimizeForLatency:true};
-      if((await VideoDecoder.isConfigSupported(c)).supported){dcfg=c;break}
-    }
-    if(!dcfg)throw new Error('Trình duyệt không decode được codec '+vid.codec);
-    dec.configure(dcfg);
-    // Wait on 'dequeue' events instead of polling timers (setTimeout is clamped to >=4ms)
-    const waitQ=async()=>{
-      while(dec.decodeQueueSize>24||outs.some(o=>o.enc.encodeQueueSize>16)){
-        await new Promise(r=>{
-          const targets=[dec,...outs.map(o=>o.enc)];let t;
-          const go=()=>{targets.forEach(x=>x.removeEventListener('dequeue',go));clearTimeout(t);r()};
-          targets.forEach(x=>x.addEventListener('dequeue',go));t=setTimeout(go,50);
-        });
-        if(err)throw err;
-      }
+  if(stopped)throw STOP;
+  const vw=vid.video.width,vh=vid.video.height;
+  const fps=Math.round(vid.nb_samples/(vid.duration/vid.timescale))||30;
+  const name=$('appName').value.trim(),cta=getCta();
+  const outs=[];
+  for(const f of Object.keys(RATIOS).filter(k=>sel.has(k))){
+    const [rw,rh]=RATIOS[f];
+    const H=even(vh),W=even(H*rw/rh);
+    const sc=Math.min(W/vw,H/vh),dw=vw*sc,dh=vh*sc,dx=(W-dw)/2,dy=(H-dh)/2;
+    const overlay=f==='16:9'?buildOverlay(W,H,dx,dw,name,cta,ctaColor):null;
+    const canvas=new OffscreenCanvas(W,H),ctx=canvas.getContext('2d',{alpha:false});ctx.imageSmoothingQuality='high';
+    // Smooth gaussian blur: blur at 1/6 scale (fast), with padding so edges don't fade, then upscale
+    const bw=Math.max(16,Math.round(W/6)),bh=Math.max(16,Math.round(H/6));
+    const br=Math.max(4,bh*0.045),pad=Math.ceil(br*3),bwP=bw+2*pad,bhP=bh+2*pad;
+    const bg=new OffscreenCanvas(bwP,bhP),bctx=bg.getContext('2d');bctx.imageSmoothingQuality='high';bctx.filter=`blur(${br}px)`;
+    const needBg=Math.abs(W-dw)>1||Math.abs(H-dh)>1,bs=Math.max(bwP/vw,bhP/vh)*1.15;
+    const draw=fr=>{
+      if(needBg){bctx.drawImage(fr,(bwP-vw*bs)/2,(bhP-vh*bs)/2,vw*bs,vh*bs);ctx.drawImage(bg,pad,pad,bw,bh,0,0,W,H);ctx.fillStyle='rgba(0,0,0,.35)';ctx.fillRect(0,0,W,H)}
+      ctx.drawImage(fr,dx,dy,dw,dh);
+      if(overlay)ctx.drawImage(overlay,0,0);
     };
+    const muxer=new Mp4Muxer.Muxer({
+      target:new Mp4Muxer.ArrayBufferTarget(),
+      video:{codec:'avc',width:W,height:H},
+      ...(aud?{audio:{codec:'aac',numberOfChannels:aud.audio.channel_count,sampleRate:aud.audio.sample_rate}}:{}),
+      fastStart:'in-memory',firstTimestampBehavior:'offset'
+    });
+    const bitrate=Math.min(50e6,Math.max(8e6,W*H*fps*0.15));
+    let cfg=null;
+    find:for(const hw of ['prefer-hardware','no-preference'])for(const codec of ['avc1.640033','avc1.4d0033','avc1.42003e']){
+      const c={codec,width:W,height:H,bitrate,framerate:fps,hardwareAcceleration:hw};
+      if((await VideoEncoder.isConfigSupported(c)).supported){cfg=c;break find}
+    }
+    if(!cfg)throw new Error('Không encode được H.264 ở '+f+' ('+W+'×'+H+')');
+    const enc=new VideoEncoder({output:(c,m)=>muxer.addVideoChunk(c,m),error:e=>err=e});
+    enc.configure(cfg);
+    // Audio: copy original AAC packets as-is (no re-encode)
+    as.forEach((s,i)=>muxer.addAudioChunkRaw(s.data,s.is_sync?'key':'delta',Math.round(1e6*s.cts/s.timescale),Math.round(1e6*s.duration/s.timescale),
+      i===0?{decoderConfig:{codec:aud.codec,numberOfChannels:aud.audio.channel_count,sampleRate:aud.audio.sample_rate,description:audDesc}}:undefined));
+    outs.push({fmt:f,W,H,canvas,draw,muxer,enc});
+  }
 
-    // 3. Decode once -> draw + encode for every format
-    for(let i=0;i<vs.length;i++){
-      if(err)throw err;
-      const s=vs[i];
-      dec.decode(new EncodedVideoChunk({type:s.is_sync?'key':'delta',timestamp:Math.round(1e6*s.cts/s.timescale),duration:Math.round(1e6*s.duration/s.timescale),data:s.data}));
-      await waitQ();
-      if(i%30===0){
-        const p=Math.round(n/vs.length*100);$('barI').style.width=p+'%';
-        $('status').textContent=`Đang xử lý ${outs.length} format… ${p}% (${n}/${vs.length} frame)`;
-        await sleep(0);
+  let n=0;
+  const dec=new VideoDecoder({
+    output:fr=>{
+      for(const o of outs){
+        o.draw(fr);
+        const out=new VideoFrame(o.canvas,{timestamp:fr.timestamp,duration:fr.duration||undefined});
+        o.enc.encode(out,{keyFrame:n%(fps*2)===0});out.close();
       }
+      fr.close();n++;
+    },
+    error:e=>err=e
+  });
+  let dcfg=null;
+  for(const hw of ['prefer-hardware','no-preference']){
+    const c={codec:vid.codec,codedWidth:vw,codedHeight:vh,description:videoDesc(mp4,vid),hardwareAcceleration:hw,optimizeForLatency:true};
+    if((await VideoDecoder.isConfigSupported(c)).supported){dcfg=c;break}
+  }
+  if(!dcfg)throw new Error('Trình duyệt không decode được codec '+vid.codec);
+  dec.configure(dcfg);
+  // Wait on 'dequeue' events instead of polling timers (setTimeout is clamped to >=4ms)
+  const waitQ=async()=>{
+    while(dec.decodeQueueSize>24||outs.some(o=>o.enc.encodeQueueSize>16)){
+      await new Promise(r=>{
+        const targets=[dec,...outs.map(o=>o.enc)];let t;
+        const go=()=>{targets.forEach(x=>x.removeEventListener('dequeue',go));clearTimeout(t);r()};
+        targets.forEach(x=>x.addEventListener('dequeue',go));t=setTimeout(go,50);
+      });
+      if(err)throw err;
+      if(stopped)throw STOP;
     }
-    await dec.flush();
-    for(const o of outs)await o.enc.flush();
-    if(err)throw err;
+  };
 
-    // 4. Results
-    clearResults();
-    const base=file.name.replace(/\.[^.]+$/,'');
-    for(const o of outs){
-      o.muxer.finalize();
-      const u=URL.createObjectURL(new Blob([o.muxer.target.buffer],{type:'video/mp4'}));urls.push(u);
-      const d=document.createElement('div');d.className='res';
-      d.innerHTML=`<div class="t">${o.fmt} — ${o.W}×${o.H}</div><video controls playsinline src="${u}"></video><a class="btn primary download" href="${u}" download="${base}_${o.fmt.replace(':','x')}.mp4">Download ${o.fmt}</a>`;
-      $('results').appendChild(d);
+  // Decode once -> draw + encode for every format
+  const kill=()=>{try{dec.close()}catch{}outs.forEach(o=>{try{o.enc.close()}catch{}})};
+  curKill=kill;
+  try{
+  for(let i=0;i<vs.length;i++){
+    if(err)throw err;
+    if(stopped)throw STOP;
+    const s=vs[i];
+    dec.decode(new EncodedVideoChunk({type:s.is_sync?'key':'delta',timestamp:Math.round(1e6*s.cts/s.timescale),duration:Math.round(1e6*s.duration/s.timescale),data:s.data}));
+    await waitQ();
+    if(i%30===0){onProg(n/vs.length);await sleep(0)}
+  }
+  await dec.flush();
+  for(const o of outs)await o.enc.flush();
+  if(err)throw err;
+  }catch(e){kill();throw e}finally{curKill=null}
+  if(stopped)throw STOP;
+  return outs.map(o=>{o.muxer.finalize();return{fmt:o.fmt,W:o.W,H:o.H,data:o.muxer.target.buffer}});
+}
+
+// ---- Run batch + package output ----
+// 1 in + 1 out            -> plain .mp4
+// 1 in + 2-3 out          -> zip: all videos
+// >=2 in + 1 out each     -> zip: all videos
+// >=2 in + >=2 out each   -> zip: one folder per input video
+$('go').onclick=async()=>{
+  if(!files.length||busy)return;
+  if(!window.VideoDecoder||!window.VideoEncoder){$('status').textContent='Trình duyệt không hỗ trợ WebCodecs. Hãy dùng Chrome/Edge bản mới.';return}
+  busy=true;stopped=false;$('go').disabled=true;$('stop').disabled=false;$('preview').style.display='none';clearResults();$('bar').style.display='block';$('barI').style.width='0';
+  const t0=performance.now(),total=files.length,nF=sel.size;
+  const mode=total===1&&nF===1?'single':(total>=2&&nF>=2?'folders':'flat');
+  const zip=mode==='single'?null:new JSZip(),items=[],failed=[],used=new Set();
+  try{
+    for(let i=0;i<total;i++){
+      if(stopped)break;
+      const f=files[i];
+      let base=f.name.replace(/\.[^.]+$/,''),k=1,b0=base;
+      while(used.has(base))base=b0+'_'+(++k);used.add(base);
+      try{
+        const outs=await processVideo(f,p=>{
+          $('barI').style.width=Math.round((i+p)/total*100)+'%';
+          $('status').textContent=`Video ${i+1}/${total}: ${f.name} — ${Math.round(p*100)}% (${nF} format)`;
+        });
+        for(const o of outs){
+          const fn=`${base}_${o.fmt.replace(':','x')}.mp4`;
+          const blob=new Blob([o.data],{type:'video/mp4'}),u=URL.createObjectURL(blob);urls.push(u);
+          const p=mode==='folders'?`${base}/${fn}`:fn;
+          items.push({fmt:o.fmt,W:o.W,H:o.H,p,u});
+          if(zip)zip.file(p,blob);
+        }
+      }catch(e){if(stopped)break;console.error(e);failed.push(`${f.name}: ${e&&e.message?e.message:e}`)}
     }
+    if(stopped){clearResults();$('bar').style.display='none';$('preview').style.display='none';$('status').textContent='Đã dừng. Kết quả chưa hoàn tất đã được hủy.';return}
+    if(!items.length)throw new Error(failed[0]||'Không có output nào.');
+    const now=new Date(),p2=n=>String(n).padStart(2,'0');
+    const stamp=`Rs_${now.getHours()}h${p2(now.getMinutes())}_${p2(now.getMonth()+1)}${p2(now.getDate())}`;
+    const res=$('results'),d=document.createElement('div');d.className='res';
+    const strip=`<div class="strip">${items.map(o=>`<div class="vc"><video controls playsinline preload="metadata" src="${o.u}" style="aspect-ratio:${o.W}/${o.H}"></video><div class="cap" title="${esc(o.p)}">${o.fmt} — ${o.W}×${o.H} · ${esc(o.p)}</div></div>`).join('')}</div>`;
+    let dl,dn,info;
+    if(mode==='single'){dl=items[0].u;dn=`${stamp}.mp4`;info=`${items[0].fmt} — ${items[0].W}×${items[0].H}`}
+    else{
+      $('status').textContent='Đang nén file zip…';
+      const blob=await zip.generateAsync({type:'blob',compression:'STORE'});
+      dl=URL.createObjectURL(blob);urls.push(dl);dn=`${stamp}.zip`;info=`${items.length} video (${mb(blob.size)})`;
+    }
+    d.innerHTML=`<div class="t">${dn} — ${info}</div>${strip}<a class="btn primary download" href="${dl}" download="${dn}">Download ${mode==='single'?items[0].fmt:'ZIP'}</a>`;
+    res.appendChild(d);
     $('preview').style.display='block';$('barI').style.width='100%';
-    $('status').textContent=`Xong ${outs.length} format trong ${((performance.now()-t0)/1000).toFixed(1)}s.`;
+    $('status').textContent=`Xong ${total-failed.length}/${total} video trong ${((performance.now()-t0)/1000).toFixed(1)}s.`+(failed.length?' Lỗi: '+failed.join(' | '):'');
   }catch(e){
     console.error(e);$('status').textContent='Lỗi: '+(e&&e.message?e.message:e);$('bar').style.display='none';
-  }finally{busy=false;$('go').disabled=!file}
+  }finally{busy=false;$('go').disabled=!files.length;$('stop').disabled=true}
 };
-const esc=t=>t.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+$('stop').onclick=()=>{
+  if(!busy)return;
+  stopped=true;$('stop').disabled=true;$('status').textContent='Đang dừng…';
+  if(curKill)curKill();
+};
+
 function renderDemo(){
   const name=$('appName').value.trim(),cta=getCta(),H=200;
   const logo=logoImg?`<img src="${logoImg.src}" alt="">`:'<span>Logo</span>';
